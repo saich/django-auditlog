@@ -58,8 +58,8 @@ class LogEntryManager(models.Manager):
                 else:
                     self.filter(content_type=kwargs.get('content_type'), object_pk=kwargs.get('object_pk', '')).delete()
             # save LogEntry to same database instance is using
-            db = instance._state.db
-            return self.create(**kwargs) if db is None or db == '' else self.using(db).create(**kwargs)
+            # removing using instance._state.db as this causes problem when using read replica
+            return self.create(**kwargs)
         return None
 
     def get_for_object(self, instance):
